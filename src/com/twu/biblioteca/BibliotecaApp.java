@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BibliotecaApp {
-    private int bookNameLength = 40;
 
     public static void main(String[] args) throws IOException {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
@@ -23,40 +22,24 @@ public class BibliotecaApp {
 
     public void listBooks() throws IOException {
         System.out.println("Book List:");
-        List<String> books = getBookList("library.txt");
-        for(String book : books) {
-            String[] bookDetails = getBookDetails(book);
-            printBookDetails(bookDetails);
+        List<Book> books = getBookList("library.txt");
+        for(Book book : books) {
+            book.printBookDetails();
         }
     }
 
-    private void printBookDetails(String[] detail) {
-        String bookName = detail[0];
-        String year = detail[1];
-        String author = detail[2];
-
-        System.out.print(bookName);
-        for (int i = 0; i < bookNameLength - bookName.length(); i ++) {
-            System.out.print(" ");
-        }
-        System.out.println(" | " + year + " | " + author);
-    }
-
-    public List<String> getBookList(String filepath) throws IOException {
+    public List<Book> getBookList(String filepath) throws IOException {
         File file = new File(filepath);
         FileInputStream stream = new FileInputStream(file);
         InputStreamReader reader = new InputStreamReader(stream);
         BufferedReader bufferedReader = new BufferedReader(reader);
 
-        List<String> books = new ArrayList<String>();
+        List<Book> books = new ArrayList<Book>();
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-            books.add(line);
+            String[] detail = line.split("    ");
+            books.add(new Book(detail[0], detail[1], detail[2]));
         }
         return books;
-    }
-
-    public String[] getBookDetails(String book) {
-        return book.split("    ");
     }
 }
