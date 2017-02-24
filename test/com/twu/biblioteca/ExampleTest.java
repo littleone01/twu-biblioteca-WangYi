@@ -13,19 +13,23 @@ public class ExampleTest {
     @Test
     public void should_get_book_list_in_library_file() throws IOException {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
-        List<Book> books = bibliotecaApp.getBookList("test/com/twu/biblioteca/test_lib.txt");
+        bibliotecaApp.getBookList("test/com/twu/biblioteca/test_lib.txt");
+        List<Book> books = bibliotecaApp.getBooks();
 
         assertEquals(2, books.size());
 
         Book refactor = books.get(0);
         Book tdd = books.get(1);
 
+        assertEquals(1, refactor.getId());
         assertEquals("Refactor", refactor.getTitle());
-        assertEquals("2003", refactor.getYear());
+        assertEquals(2003, refactor.getYear());
         assertEquals("MartinFowler", refactor.getAuthor());
+        assertEquals("in", refactor.getStatus());
 
+        assertEquals(2, tdd.getId());
         assertEquals("TDD", tdd.getTitle());
-        assertEquals("2003", tdd.getYear());
-        assertEquals("Beck", tdd.getAuthor());
+        assertEquals(2003, tdd.getYear());
+        assertEquals("out", "Beck", tdd.getAuthor());
     }
 }
