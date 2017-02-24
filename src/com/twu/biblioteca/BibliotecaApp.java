@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BibliotecaApp {
+    private int bookNameLength = 40;
 
     public static void main(String[] args) throws IOException {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
@@ -24,8 +25,21 @@ public class BibliotecaApp {
         System.out.println("Book List:");
         List<String> books = getBookList("library.txt");
         for(String book : books) {
-            System.out.println(book);
+            String[] bookDetails = getBookDetails(book);
+            printBookDetails(bookDetails);
         }
+    }
+
+    private void printBookDetails(String[] detail) {
+        String bookName = detail[0];
+        String year = detail[1];
+        String author = detail[2];
+
+        System.out.print(bookName);
+        for (int i = 0; i < bookNameLength - bookName.length(); i ++) {
+            System.out.print(" ");
+        }
+        System.out.println(" | " + year + " | " + author);
     }
 
     public List<String> getBookList(String filepath) throws IOException {
@@ -40,5 +54,9 @@ public class BibliotecaApp {
             books.add(line);
         }
         return books;
+    }
+
+    public String[] getBookDetails(String book) {
+        return book.split("    ");
     }
 }
