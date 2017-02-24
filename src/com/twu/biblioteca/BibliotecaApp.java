@@ -30,7 +30,8 @@ public class BibliotecaApp {
             case 1:
                 this.listBooks();
                 break;
-
+            default:
+                System.out.println("Select a valid option!");
         }
     }
 
