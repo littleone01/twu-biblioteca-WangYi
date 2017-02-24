@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static java.lang.System.exit;
+
 public class BibliotecaApp {
 
     public static void main(String[] args) throws IOException {
@@ -30,6 +32,9 @@ public class BibliotecaApp {
             case 1:
                 this.listBooks();
                 break;
+            case 0:
+                exit(0);
+                break;
             default:
                 System.out.println("Select a valid option!");
         }
@@ -38,6 +43,7 @@ public class BibliotecaApp {
     private int showMainMenu() throws IOException {
         System.out.println("Main Menu:");
         System.out.println("1. List Books");
+        System.out.println("0. Quit");
         System.out.println("Please select an option: ");
         Scanner input = new Scanner(System.in);
         return input.nextInt();
@@ -65,8 +71,10 @@ public class BibliotecaApp {
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             String[] detail = line.split("    ");
-            books.add(new Book(detail[0], detail[1], detail[2]));
+            books.add(new Book(Integer.parseInt(detail[0]), detail[1], Integer.parseInt(detail[2]), detail[3]));
         }
+
+        stream.close();
         return books;
     }
 }
