@@ -7,13 +7,39 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class BibliotecaApp {
 
     public static void main(String[] args) throws IOException {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
         bibliotecaApp.welcome();
-        bibliotecaApp.listBooks();
+        bibliotecaApp.mainMenu();
+    }
+
+    private void mainMenu() throws IOException {
+        int option;
+        while(true) {
+            option = this.showMainMenu();
+            this.process(option);
+        }
+    }
+
+    private void process(int option) throws IOException {
+        switch (option){
+            case 1:
+                this.listBooks();
+                break;
+
+        }
+    }
+
+    private int showMainMenu() throws IOException {
+        System.out.println("Main Menu:");
+        System.out.println("1. List Books");
+        System.out.println("Please select an option: ");
+        Scanner input = new Scanner(System.in);
+        return input.nextInt();
     }
 
     public void welcome() {
