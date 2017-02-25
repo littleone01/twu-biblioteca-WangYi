@@ -4,12 +4,11 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
+
 import static org.mockito.Mockito.mock;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class BibliotecaAppTest {
 
@@ -42,8 +41,8 @@ public class BibliotecaAppTest {
         bibliotecaApp.getBookList("src/test/java/com/twu/biblioteca/test_lib.txt");
         List<Book> books = bibliotecaApp.getBooks();
 
-        boolean ifInOfId1 = bibliotecaApp.checkOutBookWithId(1);
-        boolean ifInOfId2 = bibliotecaApp.checkOutBookWithId(2);
+        boolean ifInOfId1 = bibliotecaApp.checkOutBookWithTitle("Refactor");
+        boolean ifInOfId2 = bibliotecaApp.checkOutBookWithTitle("TDD");
 
         assertEquals("out", books.get(0).getStatus());
         assertEquals(true, ifInOfId1);
@@ -55,7 +54,7 @@ public class BibliotecaAppTest {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
         bibliotecaApp.getBookList("src/test/java/com/twu/biblioteca/test_lib.txt");
         List<Book> books = bibliotecaApp.getBooks();
-        boolean ifOutOfId2 = bibliotecaApp.returnBookWithId(2);
+        boolean ifOutOfId2 = bibliotecaApp.returnBookWithTitle("TDD");
 
         assertEquals("in", books.get(1).getStatus());
         assertEquals(true, ifOutOfId2);

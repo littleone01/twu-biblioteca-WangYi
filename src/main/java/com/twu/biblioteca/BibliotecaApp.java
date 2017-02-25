@@ -103,11 +103,11 @@ public class BibliotecaApp {
     }
 
     public void checkOutBook() {
-        System.out.println("Please input book id you would like to check out:");
+        System.out.println("Please input book title you would like to check out:");
         Scanner scanner = new Scanner(System.in);
-        int bookId = scanner.nextInt();
+        String title = scanner.next();
 
-        boolean ifIn = checkOutBookWithId(bookId);
+        boolean ifIn = checkOutBookWithTitle( title);
 
         if (!ifIn) {
             System.out.println("That book is not available.");
@@ -119,10 +119,10 @@ public class BibliotecaApp {
         }
     }
 
-    public boolean checkOutBookWithId(int bookId) {
+    public boolean checkOutBookWithTitle(String title) {
         boolean ifIn = false;
         for (Book book : books) {
-            if (book.getId() == bookId && book.getStatus().equals("in")) {
+            if (book.getTitle().equals(title) && book.getStatus().equals("in")) {
                 book.setStatus("out");
                 ifIn = true;
                 break;
@@ -132,11 +132,11 @@ public class BibliotecaApp {
     }
 
     public void returnBook() {
-        System.out.println("Please input book id you would like to check out:");
+        System.out.println("Please input book id you would like to return:");
         Scanner scanner = new Scanner(System.in);
-        int bookId = scanner.nextInt();
+        String title = scanner.next();
 
-        boolean ifOut = returnBookWithId(bookId);
+        boolean ifOut = returnBookWithTitle(title);
         if (!ifOut) {
             System.out.println("That is not a valid book to return.");
         } else {
@@ -147,10 +147,10 @@ public class BibliotecaApp {
         }
     }
 
-    public boolean returnBookWithId(int bookId) {
+    public boolean returnBookWithTitle(String title) {
         boolean ifOut = false;
         for (Book book : books) {
-            if (book.getId() == bookId && book.getStatus().equals("out")) {
+            if (book.getTitle().equals(title) && book.getStatus().equals("out")) {
                 book.setStatus("in");
                 ifOut = true;
                 break;
