@@ -17,7 +17,7 @@ import static java.lang.System.exit;
 
 public class BibliotecaApp {
     private List<Book> books = new ArrayList<Book>();
-    private String fileName = "library.txt";
+    private String fileName = "books.txt";
 
     public List<Book> getBooks() {
         return books;
@@ -132,7 +132,7 @@ public class BibliotecaApp {
     }
 
     public void returnBook() {
-        System.out.println("Please input book id you would like to return:");
+        System.out.println("Please input book id you would like to return1:");
         Scanner scanner = new Scanner(System.in);
         String title = scanner.next();
 
