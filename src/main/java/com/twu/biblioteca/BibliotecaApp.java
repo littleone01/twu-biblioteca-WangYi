@@ -1,13 +1,9 @@
 package com.twu.biblioteca;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +34,12 @@ public class BibliotecaApp {
     }
 
     public void setBooks(){
-        List<String> lineList = getFileContext(bookList);
+        List<String> lineList = FileUtil.getFileContext(bookList);
         getBookList(lineList);
     }
 
     public void setMovies() {
-        List<String> lineList = getFileContext(movieList);
+        List<String> lineList = FileUtil.getFileContext(movieList);
         getMovieList(lineList);
     }
 
@@ -104,26 +100,6 @@ public class BibliotecaApp {
         }
     }
 
-    public List<String> getFileContext(String filePath) {
-        List<String> lineList = new ArrayList<String>();
-        try {
-            File file = new File(filePath);
-            FileInputStream stream = new FileInputStream(file);
-            InputStreamReader reader = new InputStreamReader(stream);
-            BufferedReader bufferedReader = new BufferedReader(reader);
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                lineList.add(line);
-            }
-            stream.close();
-        } catch (IOException e) {
-            System.out.println("Fail to open file " + filePath);
-        }
-
-        return lineList;
-    }
-
     public void getBookList(List<String> lineList){
         for (String line : lineList) {
             String[] detail = line.split("    ");
@@ -146,11 +122,20 @@ public class BibliotecaApp {
         if (!ifIn) {
             System.out.println("That book is not available.");
         } else {
-            boolean ifSuccess = writeToFile(bookList);
+            List<String> contextToWrite = generateBookFileContext();
+            boolean ifSuccess = FileUtil.writeToFile(bookList, contextToWrite);
             if (ifSuccess) {
                 System.out.println("Thank you! Enjoy the book");
             }
         }
+    }
+
+    private List<String> generateBookFileContext() {
+        List<String> bookFileContext = new ArrayList<String>();
+        for (Book book : books) {
+            bookFileContext.add(book.outputLine());
+        }
+        return bookFileContext;
     }
 
     public boolean checkOutBookWithTitle(String title) {
@@ -174,7 +159,8 @@ public class BibliotecaApp {
         if (!ifOut) {
             System.out.println("That is not a valid book to return.");
         } else {
-            boolean ifSuccess = writeToFile(bookList);
+            List<String> contextToWrite = generateBookFileContext();
+            boolean ifSuccess = FileUtil.writeToFile(bookList, contextToWrite);
             if (ifSuccess) {
                 System.out.println("Thank you for returning the book.");
             }
@@ -193,26 +179,7 @@ public class BibliotecaApp {
         return ifOut;
     }
 
-    private boolean writeToFile(String fileName) {
-        boolean ifSuccess = true;
-        try {
-            FileOutputStream output = new FileOutputStream(fileName);
-            OutputStreamWriter streamWriter = new OutputStreamWriter(output);
-            BufferedWriter bufferedWriter = new BufferedWriter(streamWriter);
-            for (Book book : books) {
-                bufferedWriter.write(book.outputLine());
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Fail to write to file " + fileName);
-            ifSuccess = false;
-        } finally {
-            return ifSuccess;
-        }
 
-    }
 
     public List<Movie> getMovies() {
         return movies;

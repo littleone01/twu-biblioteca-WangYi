@@ -3,6 +3,7 @@ package com.twu.biblioteca;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -19,10 +20,10 @@ public class BibliotecaAppTest {
     @Before
     public void setUp() throws Exception {
         bibliotecaApp = new BibliotecaApp();
-        List<String> lineList_book = bibliotecaApp.getFileContext("src/test/java/com/twu/biblioteca/test_lib_book.txt");
+        List<String> lineList_book = FileUtil.getFileContext("src/test/java/com/twu/biblioteca/test_lib_book.txt");
         bibliotecaApp.getBookList(lineList_book);
         books = bibliotecaApp.getBooks();
-        List<String> lineList_movie = bibliotecaApp.getFileContext("src/test/java/com/twu/biblioteca/test_lib_movie.txt");
+        List<String> lineList_movie = FileUtil.getFileContext("src/test/java/com/twu/biblioteca/test_lib_movie.txt");
         bibliotecaApp.getMovieList(lineList_movie);
         movies = bibliotecaApp.getMovies();
     }
