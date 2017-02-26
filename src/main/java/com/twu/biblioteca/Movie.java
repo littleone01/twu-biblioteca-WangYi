@@ -60,4 +60,9 @@ public class Movie {
         }
         System.out.println(" | " + "YEAR" + " | " + "R" + " | " + "DIRECTOR");
     }
+
+    public String outputLine() {
+        String space = "    ";
+        return this.name + space + this.year + space + this.director + space + this.rating + space + this.status;
+    }
 }

@@ -49,7 +49,6 @@ public class BibliotecaAppTest {
 
     @Test
     public void should_set_book_status_out_when_check_out_a_book() {
-        int i = 0;
         boolean ifInOfId1 = bibliotecaApp.checkOutBookWithTitle("Refactor");
         boolean ifInOfId2 = bibliotecaApp.checkOutBookWithTitle("TDD");
 
@@ -84,5 +83,15 @@ public class BibliotecaAppTest {
         assertEquals("Ronald William Howard", beatifulMind.getDirector());
         assertEquals(1, beatifulMind.getRating());
         assertEquals("in", beatifulMind.getStatus());
+    }
+
+    @Test
+    public void should_set_movie_status_out_when_check_out_a_movie() {
+        boolean ifInOfId1 = bibliotecaApp.checkOutMovieWithName("8 Mile");
+        boolean ifInOfId2 = bibliotecaApp.checkOutMovieWithName("TDD");
+
+        assertEquals("out", movies.get(0).getStatus());
+        assertEquals(true, ifInOfId1);
+        assertEquals(false, ifInOfId2);
     }
 }

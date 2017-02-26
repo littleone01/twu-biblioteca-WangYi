@@ -57,6 +57,7 @@ public class BibliotecaApp {
         System.out.println("2. Check Out a Book");
         System.out.println("3. Return Book");
         System.out.println("4. List Movies");
+        System.out.println("5. Check Out Movie");
         System.out.println("0. Quit");
 
         System.out.println("Please select an option: ");
@@ -77,6 +78,9 @@ public class BibliotecaApp {
                 break;
             case 4:
                 this.listMovies();
+                break;
+            case 5:
+                this.checkOutMovie();
                 break;
             case 0:
                 exit(0);
@@ -179,8 +183,6 @@ public class BibliotecaApp {
         return ifOut;
     }
 
-
-
     public List<Movie> getMovies() {
         return movies;
     }
@@ -195,5 +197,43 @@ public class BibliotecaApp {
                     Integer.parseInt(detail[3]),
                     detail[4]));
         }
+    }
+
+    private void checkOutMovie() {
+        System.out.println("Please input movie name you would like to check out:");
+        Scanner scanner = new Scanner(System.in);
+        String name = scanner.nextLine();
+
+        boolean ifIn = checkOutMovieWithName(name);
+
+        if (!ifIn) {
+            System.out.println("That movie is not available.");
+        } else {
+            List<String> contextToWrite = generateMovieFileContext();
+            boolean ifSuccess = FileUtil.writeToFile(movieList, contextToWrite);
+            if (ifSuccess) {
+                System.out.println("Thank you! Enjoy the movie");
+            }
+        }
+    }
+
+    private List<String> generateMovieFileContext() {
+        List<String> movieFileContext = new ArrayList<String>();
+        for (Movie movie : movies) {
+            movieFileContext.add(movie.outputLine());
+        }
+        return movieFileContext;
+    }
+
+    public boolean checkOutMovieWithName(String movieName) {
+        boolean ifIn = false;
+        for (Movie movie : movies) {
+            if (movie.getName().equals(movieName) && movie.getStatus().equals("in")) {
+                movie.setStatus("out");
+                ifIn = true;
+                break;
+            }
+        }
+        return ifIn;
     }
 }
