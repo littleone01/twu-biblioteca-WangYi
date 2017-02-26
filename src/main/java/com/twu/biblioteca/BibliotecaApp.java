@@ -17,7 +17,9 @@ import static java.lang.System.exit;
 
 public class BibliotecaApp {
     private List<Book> books = new ArrayList<Book>();
-    private String fileName = "books.txt";
+    private List<Movie> movies = new ArrayList<Movie>();
+    private String bookList = "books.txt";
+    private String movieList = "movies.txt";
 
     public List<Book> getBooks() {
         return books;
@@ -27,6 +29,7 @@ public class BibliotecaApp {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
         bibliotecaApp.welcome();
         bibliotecaApp.setBooks();
+        bibliotecaApp.setMovies();
         bibliotecaApp.mainMenu();
     }
 
@@ -35,7 +38,13 @@ public class BibliotecaApp {
     }
 
     public void setBooks(){
-        getBookList(fileName);
+        List<String> lineList = getFileContext(bookList);
+        getBookList(lineList);
+    }
+
+    public void setMovies() {
+        List<String> lineList = getFileContext(movieList);
+        getMovieList(lineList);
     }
 
     private void mainMenu() {
@@ -51,6 +60,7 @@ public class BibliotecaApp {
         System.out.println("1. List Books");
         System.out.println("2. Check Out a Book");
         System.out.println("3. Return Book");
+        System.out.println("4. List Movies");
         System.out.println("0. Quit");
 
         System.out.println("Please select an option: ");
@@ -69,6 +79,9 @@ public class BibliotecaApp {
             case 3:
                 this.returnBook();
                 break;
+            case 4:
+                this.listMovies();
+                break;
             case 0:
                 exit(0);
                 break;
@@ -77,28 +90,49 @@ public class BibliotecaApp {
         }
     }
 
+    private void listMovies() {
+        Movie.printDetailTitle();
+        for(Movie movie : this.movies) {
+            movie.printDetails();
+        }
+    }
+
     public void listBooks() {
-        System.out.println("Book List:");
+        Book.printDetailTitle();
         for(Book book : this.books) {
             book.printBookDetails();
         }
     }
 
-    public void getBookList(String filepath){
+    public List<String> getFileContext(String filePath) {
+        List<String> lineList = new ArrayList<String>();
         try {
-            File file = new File(filepath);
+            File file = new File(filePath);
             FileInputStream stream = new FileInputStream(file);
             InputStreamReader reader = new InputStreamReader(stream);
             BufferedReader bufferedReader = new BufferedReader(reader);
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                String[] detail = line.split("    ");
-                this.books.add(new Book(Integer.parseInt(detail[0]), detail[1], Integer.parseInt(detail[2]), detail[3], detail[4]));
+                lineList.add(line);
             }
             stream.close();
         } catch (IOException e) {
-            System.out.println("Fail to open file " + filepath);
+            System.out.println("Fail to open file " + filePath);
+        }
+
+        return lineList;
+    }
+
+    public void getBookList(List<String> lineList){
+        for (String line : lineList) {
+            String[] detail = line.split("    ");
+            this.books.add(new Book(
+                    Integer.parseInt(detail[0]),
+                    detail[1],
+                    Integer.parseInt(detail[2]),
+                    detail[3],
+                    detail[4]));
         }
     }
 
@@ -112,7 +146,7 @@ public class BibliotecaApp {
         if (!ifIn) {
             System.out.println("That book is not available.");
         } else {
-            boolean ifSuccess = writeToFile(fileName);
+            boolean ifSuccess = writeToFile(bookList);
             if (ifSuccess) {
                 System.out.println("Thank you! Enjoy the book");
             }
@@ -140,7 +174,7 @@ public class BibliotecaApp {
         if (!ifOut) {
             System.out.println("That is not a valid book to return.");
         } else {
-            boolean ifSuccess = writeToFile(fileName);
+            boolean ifSuccess = writeToFile(bookList);
             if (ifSuccess) {
                 System.out.println("Thank you for returning the book.");
             }
@@ -178,5 +212,21 @@ public class BibliotecaApp {
             return ifSuccess;
         }
 
+    }
+
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
+    public void getMovieList(List<String> lineList) {
+        for (String line : lineList) {
+            String[] detail = line.split("    ");
+            this.movies.add(new Movie(
+                    detail[0],
+                    Integer.parseInt(detail[1]),
+                    detail[2],
+                    Integer.parseInt(detail[3]),
+                    detail[4]));
+        }
     }
 }

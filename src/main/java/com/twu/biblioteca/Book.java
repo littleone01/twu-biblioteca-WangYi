@@ -10,8 +10,8 @@ public class Book {
     private String author;
     private String status;
 
-    private int TITLELENGTHLIMIT = 40;
-    private int IDLENGTH = 4;
+    private static int TITLELENGTHLIMIT = 40;
+    private static int IDLENGTH = 4;
 
     public Book(int id, String title, int year, String author, String status) {
         this.id = id;
@@ -66,5 +66,17 @@ public class Book {
     public String outputLine() {
         String space = "    ";
         return this.id + space + this.title + space + this.year + space + this.author + space + this.status;
+    }
+
+    public static void printDetailTitle() {
+        System.out.print("ID");
+        for(int i = 0; i < IDLENGTH - 2; i ++) {
+            System.out.print(" ");
+        }
+        System.out.print("TITLE");
+        for (int i = 0; i < TITLELENGTHLIMIT - 5; i ++) {
+            System.out.print(" ");
+        }
+        System.out.println(" | " + "YEAR" + " | " + "AUTHOR");
     }
 }
