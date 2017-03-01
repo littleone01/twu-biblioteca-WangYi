@@ -21,6 +21,15 @@ public class Book {
         this.status = status;
     }
 
+    public Book(String line) {
+        String[] detail = line.split("    ");
+        this.id = Integer.parseInt(detail[0]);
+        this.title = detail[1];
+        this.year = Integer.parseInt(detail[2]);
+        this.author = detail[3];
+        this.status = detail[4];
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }

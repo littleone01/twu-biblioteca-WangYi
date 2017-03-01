@@ -19,6 +19,15 @@ public class Movie {
         this.status = status;
     }
 
+    public Movie(String line) {
+        String[] detail = line.split("    ");
+        this.name = detail[0];
+        this.year = Integer.parseInt(detail[1]);
+        this.director = detail[2];
+        this.rating = Integer.parseInt(detail[3]);
+        this.status = detail[4];
+    }
+
     public String getName() {
         return name;
     }

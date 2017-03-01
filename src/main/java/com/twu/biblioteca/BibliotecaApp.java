@@ -1,10 +1,8 @@
 package com.twu.biblioteca;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -16,6 +14,9 @@ public class BibliotecaApp {
     private List<Movie> movies = new ArrayList<Movie>();
     private String bookList = "books.txt";
     private String movieList = "movies.txt";
+    private String userList = "user.txt";
+    private User user = null;
+    private Scanner scanner = new Scanner(System.in);
 
     public List<Book> getBooks() {
         return books;
@@ -51,17 +52,23 @@ public class BibliotecaApp {
         }
     }
 
-    private int showMainMenu() {
+    public int showMainMenu() {
+        String showLog = getInOrOutByUser(user);
         System.out.println("Main Menu:");
         System.out.println("1. List Books");
         System.out.println("2. Check Out a Book");
         System.out.println("3. Return Book");
         System.out.println("4. List Movies");
         System.out.println("5. Check Out Movie");
+
+        System.out.println("8. Log " + showLog);
+        if (user != null) {
+            System.out.println("9. Show Personal Information");
+        }
         System.out.println("0. Quit");
 
         System.out.println("Please select an option: ");
-        Scanner scanner = new Scanner(System.in);
+
         return scanner.nextInt();
     }
 
@@ -82,11 +89,44 @@ public class BibliotecaApp {
             case 5:
                 this.checkOutMovie();
                 break;
+            case 8:
+                this.logInandLogOut();
+                break;
+            case 9:
+                this.showUserInformation();
+                break;
             case 0:
                 exit(0);
                 break;
             default:
                 System.out.println("Select a valid option!");
+        }
+    }
+
+    private void showUserInformation() {
+        user.showInformation();
+    }
+
+    private void logInandLogOut() {
+        if (user == null) {
+            Login();
+        } else {
+            user = null;
+        }
+    }
+
+    private void Login() {
+        try {
+            BufferedReader strin=new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("username:");
+            String username = strin.readLine();
+            System.out.println("password:");
+            String password = strin.readLine();
+
+            List<String> userLineList = FileUtil.getFileContext(userList);
+            user = getUser(username, password, userLineList);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -106,19 +146,12 @@ public class BibliotecaApp {
 
     public void getBookList(List<String> lineList){
         for (String line : lineList) {
-            String[] detail = line.split("    ");
-            this.books.add(new Book(
-                    Integer.parseInt(detail[0]),
-                    detail[1],
-                    Integer.parseInt(detail[2]),
-                    detail[3],
-                    detail[4]));
+            this.books.add(new Book(line));
         }
     }
 
     public void checkOutBook() {
         System.out.println("Please input book title you would like to check out:");
-        Scanner scanner = new Scanner(System.in);
         String title = scanner.next();
 
         boolean ifIn = checkOutBookWithTitle( title);
@@ -156,7 +189,6 @@ public class BibliotecaApp {
 
     public void returnBook() {
         System.out.println("Please input book id you would like to return1:");
-        Scanner scanner = new Scanner(System.in);
         String title = scanner.next();
 
         boolean ifOut = returnBookWithTitle(title);
@@ -189,19 +221,12 @@ public class BibliotecaApp {
 
     public void getMovieList(List<String> lineList) {
         for (String line : lineList) {
-            String[] detail = line.split("    ");
-            this.movies.add(new Movie(
-                    detail[0],
-                    Integer.parseInt(detail[1]),
-                    detail[2],
-                    Integer.parseInt(detail[3]),
-                    detail[4]));
+            this.movies.add(new Movie(line));
         }
     }
 
     private void checkOutMovie() {
         System.out.println("Please input movie name you would like to check out:");
-        Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
 
         boolean ifIn = checkOutMovieWithName(name);
@@ -235,5 +260,30 @@ public class BibliotecaApp {
             }
         }
         return ifIn;
+    }
+
+    public String getInOrOutByUser(User user) {
+        return user == null ? "in" : "out";
+    }
+
+    public User getUser(String name, String password, List<String> userLineList) {
+        User user = null;
+        boolean ifWrongPassword = false;
+        for (String line : userLineList) {
+            String[] details = line.split("    ");
+            if (name.equals(details[0])) {
+                if (password.equals(details[1])) {
+                    user = new User(details[0], details[1], details[2], details[3]);
+                } else {
+                    System.out.println("Wrong password!");
+                    ifWrongPassword = true;
+                }
+                break;
+            }
+        }
+        if (!ifWrongPassword && user == null) {
+            System.out.println("Username is not exists!");
+        }
+        return user;
     }
 }

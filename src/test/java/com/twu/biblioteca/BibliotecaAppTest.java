@@ -5,12 +5,15 @@ import org.junit.Test;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.mockito.Mockito.mock;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class BibliotecaAppTest {
     BibliotecaApp bibliotecaApp;
@@ -93,5 +96,36 @@ public class BibliotecaAppTest {
         assertEquals("out", movies.get(0).getStatus());
         assertEquals(true, ifInOfId1);
         assertEquals(false, ifInOfId2);
+    }
+
+    @Test
+    public void should_return_in_when_user_not_log_in() throws Exception {
+        String showLogContent = bibliotecaApp.getInOrOutByUser(null);
+        assertEquals("in", showLogContent);
+    }
+
+    @Test
+    public void should_return_out_when_user_logged_in() throws Exception {
+        User user = new User("name", "password", "email", "number");
+        String showLogContent = bibliotecaApp.getInOrOutByUser(user);
+        assertEquals("out", showLogContent);
+    }
+
+    @Test
+    public void should_return_null_if_username_or_password_is_wrong() throws Exception {
+        List<String> userLineList = new ArrayList<String>();
+        userLineList.add("Lily    lilypassword    lily@thoughtworks.com    01066666666");
+        User userWrongPassword = bibliotecaApp.getUser("Lily", "pass", userLineList);
+        assertEquals(null, userWrongPassword);
+        User userWrongName = bibliotecaApp.getUser("Bill", "lilypassword", userLineList);
+        assertEquals(null, userWrongName);
+    }
+
+    @Test
+    public void should_return_user_if_username_and_password_are_right() throws Exception {
+        List<String> userLineList = new ArrayList<String>();
+        userLineList.add("Lily    lilypassword    lily@thoughtworks.com    01066666666");
+        User user = bibliotecaApp.getUser("Lily", "lilypassword", userLineList);
+        assertEquals("Lily", user.getName());
     }
 }
