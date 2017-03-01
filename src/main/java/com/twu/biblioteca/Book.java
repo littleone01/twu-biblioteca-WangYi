@@ -9,6 +9,7 @@ public class Book {
     private int year;
     private String author;
     private String status;
+    private String lenter;
 
     private static int TITLELENGTHLIMIT = 40;
     private static int IDLENGTH = 4;
@@ -28,6 +29,13 @@ public class Book {
         this.year = Integer.parseInt(detail[2]);
         this.author = detail[3];
         this.status = detail[4];
+        if (status.equals("out")) {
+            this.lenter = detail[5];
+        }
+    }
+
+    public void setLenter(String lenter) {
+        this.lenter = lenter;
     }
 
     public void setStatus(String status) {
@@ -74,7 +82,11 @@ public class Book {
 
     public String outputLine() {
         String space = "    ";
-        return this.id + space + this.title + space + this.year + space + this.author + space + this.status;
+        String outLine = this.id + space + this.title + space + this.year + space + this.author + space + this.status;
+        if (this.status.equals("out")) {
+            outLine = outLine + space + this.lenter;
+        }
+        return outLine;
     }
 
     public static void printDetailTitle() {
@@ -87,5 +99,15 @@ public class Book {
             System.out.print(" ");
         }
         System.out.println(" | " + "YEAR" + " | " + "AUTHOR");
+    }
+
+    public boolean CheckOut(String title, User user) {
+        if (this.title.equals(title) && this.status.equals("in")) {
+            this.status = "out";
+            this.lenter = user.getLibraryNumber();
+            return true;
+        } else {
+            return false;
+        }
     }
 }

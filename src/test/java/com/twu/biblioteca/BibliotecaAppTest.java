@@ -3,17 +3,14 @@ package com.twu.biblioteca;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import static org.mockito.Mockito.mock;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class BibliotecaAppTest {
     BibliotecaApp bibliotecaApp;
@@ -29,6 +26,8 @@ public class BibliotecaAppTest {
         List<String> lineList_movie = FileUtil.getFileContext("src/test/java/com/twu/biblioteca/test_lib_movie.txt");
         bibliotecaApp.getMovieList(lineList_movie);
         movies = bibliotecaApp.getMovies();
+        User user = new User("000-0000", "pa", "name", "em", "pn");
+        bibliotecaApp.setUser(user);
     }
 
     @Test
@@ -52,8 +51,8 @@ public class BibliotecaAppTest {
 
     @Test
     public void should_set_book_status_out_when_check_out_a_book() {
-        boolean ifInOfId1 = bibliotecaApp.checkOutBookWithTitle("Refactor");
-        boolean ifInOfId2 = bibliotecaApp.checkOutBookWithTitle("TDD");
+        boolean ifInOfId1 = ProcessUtil.checkOutBookWithTitle("Refactor", bibliotecaApp);
+        boolean ifInOfId2 = ProcessUtil.checkOutBookWithTitle("TDD", bibliotecaApp);
 
         assertEquals("out", books.get(0).getStatus());
         assertEquals(true, ifInOfId1);
@@ -106,7 +105,7 @@ public class BibliotecaAppTest {
 
     @Test
     public void should_return_out_when_user_logged_in() throws Exception {
-        User user = new User("name", "password", "email", "number");
+        User user = new User("000-0000", "password", "name", "email", "number");
         String showLogContent = bibliotecaApp.getInOrOutByUser(user);
         assertEquals("out", showLogContent);
     }
@@ -114,18 +113,18 @@ public class BibliotecaAppTest {
     @Test
     public void should_return_null_if_username_or_password_is_wrong() throws Exception {
         List<String> userLineList = new ArrayList<String>();
-        userLineList.add("Lily    lilypassword    lily@thoughtworks.com    01066666666");
-        User userWrongPassword = bibliotecaApp.getUser("Lily", "pass", userLineList);
+        userLineList.add("000-0000    lilypassword    Lily    lily@thoughtworks.com    01066666666");
+        User userWrongPassword = bibliotecaApp.getUserByLoginInfo("000-0000", "pass", userLineList);
         assertEquals(null, userWrongPassword);
-        User userWrongName = bibliotecaApp.getUser("Bill", "lilypassword", userLineList);
+        User userWrongName = bibliotecaApp.getUserByLoginInfo("000-0900", "lilypassword", userLineList);
         assertEquals(null, userWrongName);
     }
 
     @Test
     public void should_return_user_if_username_and_password_are_right() throws Exception {
         List<String> userLineList = new ArrayList<String>();
-        userLineList.add("Lily    lilypassword    lily@thoughtworks.com    01066666666");
-        User user = bibliotecaApp.getUser("Lily", "lilypassword", userLineList);
+        userLineList.add("000-0000    lilypassword    Lily    lily@thoughtworks.com    01066666666");
+        User user = bibliotecaApp.getUserByLoginInfo("000-0000", "lilypassword", userLineList);
         assertEquals("Lily", user.getName());
     }
 }

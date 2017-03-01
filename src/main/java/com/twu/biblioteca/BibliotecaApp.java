@@ -22,6 +22,18 @@ public class BibliotecaApp {
         return books;
     }
 
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public static void main(String[] args) throws IOException {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
         bibliotecaApp.welcome();
@@ -37,6 +49,12 @@ public class BibliotecaApp {
     public void setBooks(){
         List<String> lineList = FileUtil.getFileContext(bookList);
         getBookList(lineList);
+    }
+
+    public void getBookList(List<String> lineList){
+        for (String line : lineList) {
+            this.books.add(new Book(line));
+        }
     }
 
     public void setMovies() {
@@ -56,15 +74,15 @@ public class BibliotecaApp {
         String showLog = getInOrOutByUser(user);
         System.out.println("Main Menu:");
         System.out.println("1. List Books");
-        System.out.println("2. Check Out a Book");
-        System.out.println("3. Return Book");
-        System.out.println("4. List Movies");
-        System.out.println("5. Check Out Movie");
+        System.out.println("2. List Movies");
 
-        System.out.println("8. Log " + showLog);
         if (user != null) {
-            System.out.println("9. Show Personal Information");
+            System.out.println("3. Check Out a Book");
+            System.out.println("4. Return Book");
+            System.out.println("5. Check Out Movie");
+            System.out.println("6. Show Personal Information");
         }
+        System.out.println("9. Log " + showLog);
         System.out.println("0. Quit");
 
         System.out.println("Please select an option: ");
@@ -78,22 +96,22 @@ public class BibliotecaApp {
                 this.listBooks();
                 break;
             case 2:
-                this.checkOutBook();
+                this.listMovies();
                 break;
             case 3:
-                this.returnBook();
+                this.checkOutBook();
                 break;
             case 4:
-                this.listMovies();
+                this.returnBook();
                 break;
             case 5:
                 this.checkOutMovie();
                 break;
             case 8:
-                this.logInandLogOut();
+                user.showInformation();
                 break;
             case 9:
-                this.showUserInformation();
+                this.logInandLogOut();
                 break;
             case 0:
                 exit(0);
@@ -103,8 +121,18 @@ public class BibliotecaApp {
         }
     }
 
-    private void showUserInformation() {
-        user.showInformation();
+    public void listBooks() {
+        Book.printDetailTitle();
+        for(Book book : this.books) {
+            book.printBookDetails();
+        }
+    }
+
+    private void listMovies() {
+        Movie.printDetailTitle();
+        for(Movie movie : this.movies) {
+            movie.printDetails();
+        }
     }
 
     private void logInandLogOut() {
@@ -118,35 +146,15 @@ public class BibliotecaApp {
     private void Login() {
         try {
             BufferedReader strin=new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("username:");
-            String username = strin.readLine();
+            System.out.println("library number:");
+            String libraryNumber = strin.readLine();
             System.out.println("password:");
             String password = strin.readLine();
 
             List<String> userLineList = FileUtil.getFileContext(userList);
-            user = getUser(username, password, userLineList);
+            user = getUserByLoginInfo(libraryNumber, password, userLineList);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void listMovies() {
-        Movie.printDetailTitle();
-        for(Movie movie : this.movies) {
-            movie.printDetails();
-        }
-    }
-
-    public void listBooks() {
-        Book.printDetailTitle();
-        for(Book book : this.books) {
-            book.printBookDetails();
-        }
-    }
-
-    public void getBookList(List<String> lineList){
-        for (String line : lineList) {
-            this.books.add(new Book(line));
         }
     }
 
@@ -154,12 +162,12 @@ public class BibliotecaApp {
         System.out.println("Please input book title you would like to check out:");
         String title = scanner.next();
 
-        boolean ifIn = checkOutBookWithTitle( title);
+        boolean ifIn = ProcessUtil.checkOutBookWithTitle(title, this);
 
         if (!ifIn) {
             System.out.println("That book is not available.");
         } else {
-            List<String> contextToWrite = generateBookFileContext();
+            List<String> contextToWrite = ProcessUtil.generateBookFileContext(this);
             boolean ifSuccess = FileUtil.writeToFile(bookList, contextToWrite);
             if (ifSuccess) {
                 System.out.println("Thank you! Enjoy the book");
@@ -167,35 +175,15 @@ public class BibliotecaApp {
         }
     }
 
-    private List<String> generateBookFileContext() {
-        List<String> bookFileContext = new ArrayList<String>();
-        for (Book book : books) {
-            bookFileContext.add(book.outputLine());
-        }
-        return bookFileContext;
-    }
-
-    public boolean checkOutBookWithTitle(String title) {
-        boolean ifIn = false;
-        for (Book book : books) {
-            if (book.getTitle().equals(title) && book.getStatus().equals("in")) {
-                book.setStatus("out");
-                ifIn = true;
-                break;
-            }
-        }
-        return ifIn;
-    }
-
     public void returnBook() {
-        System.out.println("Please input book id you would like to return1:");
+        System.out.println("Please input book title you would like to return1:");
         String title = scanner.next();
 
         boolean ifOut = returnBookWithTitle(title);
         if (!ifOut) {
             System.out.println("That is not a valid book to return.");
         } else {
-            List<String> contextToWrite = generateBookFileContext();
+            List<String> contextToWrite = ProcessUtil.generateBookFileContext(this);
             boolean ifSuccess = FileUtil.writeToFile(bookList, contextToWrite);
             if (ifSuccess) {
                 System.out.println("Thank you for returning the book.");
@@ -213,10 +201,6 @@ public class BibliotecaApp {
             }
         }
         return ifOut;
-    }
-
-    public List<Movie> getMovies() {
-        return movies;
     }
 
     public void getMovieList(List<String> lineList) {
@@ -266,14 +250,14 @@ public class BibliotecaApp {
         return user == null ? "in" : "out";
     }
 
-    public User getUser(String name, String password, List<String> userLineList) {
+    public User getUserByLoginInfo(String libraryNumber, String password, List<String> userLineList) {
         User user = null;
         boolean ifWrongPassword = false;
         for (String line : userLineList) {
             String[] details = line.split("    ");
-            if (name.equals(details[0])) {
+            if (libraryNumber.equals(details[0])) {
                 if (password.equals(details[1])) {
-                    user = new User(details[0], details[1], details[2], details[3]);
+                    user = new User(details[0], details[1], details[2], details[3], details[4]);
                 } else {
                     System.out.println("Wrong password!");
                     ifWrongPassword = true;
@@ -282,7 +266,9 @@ public class BibliotecaApp {
             }
         }
         if (!ifWrongPassword && user == null) {
-            System.out.println("Username is not exists!");
+            System.out.println("Library number is not exists!");
+        } else {
+            System.out.println("Log in SUCCESS！");
         }
         return user;
     }
