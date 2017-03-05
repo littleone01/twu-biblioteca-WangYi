@@ -34,6 +34,10 @@ public class BibliotecaApp {
         this.user = user;
     }
 
+    public String getBookList() {
+        return bookList;
+    }
+
     public static void main(String[] args) throws IOException {
         BibliotecaApp bibliotecaApp = new BibliotecaApp();
         bibliotecaApp.welcome();
@@ -117,7 +121,7 @@ public class BibliotecaApp {
                 exit(0);
                 break;
             default:
-                System.out.println("Select a valid option!");
+                System.out.println(PrintUtil.WRONG_OPTION_HINT);
         }
     }
 
@@ -143,6 +147,68 @@ public class BibliotecaApp {
         }
     }
 
+    public void checkOutBook() {
+        System.out.println("Please input book title you would like to check out:");
+        String title = scanner.next();
+
+        boolean ifIn = checkOutBookWithTitle(title);
+
+        saveRecord(ifIn, PrintUtil.BOOK_CHECKOUT_FAIL_HINT, PrintUtil.BOOK_CHECKOUT_SUCCESS_HINT);
+    }
+
+    public List<String> generateBookFileContext() {
+        List<String> bookFileContext = new ArrayList<String>();
+        for (Book book : books) {
+            bookFileContext.add(book.outputLine());
+        }
+        return bookFileContext;
+    }
+
+    public boolean checkOutBookWithTitle(String title) {
+        boolean ifIn = false;
+        for (Book book : books) {
+            ifIn = book.CheckOut(title, user);
+            if (ifIn) {
+                break;
+            }
+        }
+        return ifIn;
+    }
+
+    public boolean returnBookWithTitle(String title) {
+        boolean ifOut = false;
+        for (Book book : books) {
+            if (book.getTitle().equals(title) && book.getStatus().equals("out")) {
+                book.setStatus("in");
+                ifOut = true;
+                break;
+            }
+        }
+        return ifOut;
+    }
+
+    public void saveRecord(boolean ifProcessSuccess, String processFailHint, String saveSuccessHint) {
+        if (!ifProcessSuccess) {
+            System.out.println(processFailHint);
+        } else {
+            List<String> contextToWrite = generateBookFileContext();
+            boolean ifSuccess = FileUtil.writeToFile(bookList, contextToWrite);
+            if (ifSuccess) {
+                System.out.println(saveSuccessHint);
+            }
+        }
+    }
+
+    public void returnBook() {
+        System.out.println("Please input book title you would like to return1:");
+        String title = scanner.next();
+
+        boolean ifOut = returnBookWithTitle(title);
+
+        saveRecord(ifOut, PrintUtil.BOOK_RETURN_FAIL_HINT, PrintUtil.BOOK_RETURN_SUCCESS_HINT);
+
+    }
+
     private void Login() {
         try {
             BufferedReader strin=new BufferedReader(new InputStreamReader(System.in));
@@ -156,51 +222,6 @@ public class BibliotecaApp {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void checkOutBook() {
-        System.out.println("Please input book title you would like to check out:");
-        String title = scanner.next();
-
-        boolean ifIn = ProcessUtil.checkOutBookWithTitle(title, this);
-
-        if (!ifIn) {
-            System.out.println("That book is not available.");
-        } else {
-            List<String> contextToWrite = ProcessUtil.generateBookFileContext(this);
-            boolean ifSuccess = FileUtil.writeToFile(bookList, contextToWrite);
-            if (ifSuccess) {
-                System.out.println("Thank you! Enjoy the book");
-            }
-        }
-    }
-
-    public void returnBook() {
-        System.out.println("Please input book title you would like to return1:");
-        String title = scanner.next();
-
-        boolean ifOut = returnBookWithTitle(title);
-        if (!ifOut) {
-            System.out.println("That is not a valid book to return.");
-        } else {
-            List<String> contextToWrite = ProcessUtil.generateBookFileContext(this);
-            boolean ifSuccess = FileUtil.writeToFile(bookList, contextToWrite);
-            if (ifSuccess) {
-                System.out.println("Thank you for returning the book.");
-            }
-        }
-    }
-
-    public boolean returnBookWithTitle(String title) {
-        boolean ifOut = false;
-        for (Book book : books) {
-            if (book.getTitle().equals(title) && book.getStatus().equals("out")) {
-                book.setStatus("in");
-                ifOut = true;
-                break;
-            }
-        }
-        return ifOut;
     }
 
     public void getMovieList(List<String> lineList) {

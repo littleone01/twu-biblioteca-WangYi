@@ -51,8 +51,8 @@ public class BibliotecaAppTest {
 
     @Test
     public void should_set_book_status_out_when_check_out_a_book() {
-        boolean ifInOfId1 = ProcessUtil.checkOutBookWithTitle("Refactor", bibliotecaApp);
-        boolean ifInOfId2 = ProcessUtil.checkOutBookWithTitle("TDD", bibliotecaApp);
+        boolean ifInOfId1 = bibliotecaApp.checkOutBookWithTitle("Refactor");
+        boolean ifInOfId2 = bibliotecaApp.checkOutBookWithTitle("TDD");
 
         assertEquals("out", books.get(0).getStatus());
         assertEquals(true, ifInOfId1);
